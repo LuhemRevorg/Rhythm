@@ -1,0 +1,64 @@
+/* src/pages/page.module.css */
+.page {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* White text */
+    min-height: 100vh; /* Full height */
+    padding: 20px; /* Padding */
+    font-family: 'Arial', sans-serif; /* Clean font */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .scriptContainer {
+    background-color: rgba(30, 30, 30, 0.8); /* Light black background for script box */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding */
+    max-width: 600px; /* Limit width */
+    margin: auto; /* Center container */
+  }
+  
+  .scriptBox {
+    width: 100%; /* Full width */
+    height: 200px; /* Height */
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px; /* Padding */
+    background-color: rgba(255, 255, 255, 0.1); /* Light background */
+    color: #ffffff; /* White text */
+    resize: none; /* Disable resize */
+  }
+  
+  .buttonContainer {
+    display: flex; /* Flex for buttons */
+    justify-content: space-between; /* Space between buttons */
+    margin-top: 10px; /* Space above buttons */
+  }
+  
+  .recordButton {
+    background-color: #e91e63; /* Record button color */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+  }
+  
+  .recordButton:hover {
+    background-color: #c2185b; /* Darker shade on hover */
+  }
+  
+  .downloadButton {
+    background-color: #4caf50; /* Download button color */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+  }
+  
+  .downloadButton:hover {
+    background-color: #388e3c; /* Darker shade on hover */
+  }
+  
