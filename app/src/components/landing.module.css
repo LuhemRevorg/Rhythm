@@ -24,19 +24,36 @@
   
   .text_container {
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     color: white;
     opacity: 0;
     transition: opacity 2s ease, transform 2s ease;
+    min-width: 900px;
   }
   
   .text_fade_in {
     opacity: 1;
     transform: translate(-50%, -50%);
     transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+  }
+  
+  .project_header {
+    font-size: 6.5rem; /* Adjust size for prominence */
+    font-weight: bold; /* Make the text bold */
+    color: #fff; /* White text color */
+    text-align: center; /* Center the text */
+    padding: 20px; /* Add some padding for breathing room */
+    border-radius: 8px; /* Slightly round the corners */
+    text-transform: uppercase; /* Make the text uppercase */
+    letter-spacing: 2px; /* Space the letters for a modern look */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
+  }
+  
+  .project_header:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
   }
   
   .main_text {
@@ -52,7 +69,7 @@
   /* Speaker section */
   .speaker_container {
     position: absolute;
-    bottom: 0;
+    top: 50%;
     width: 100%;
     display: flex;
     justify-content: space-evenly;
@@ -102,18 +119,17 @@
   }
   
   .speaker_button {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-top: 12rem;
     background-color: transparent;
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     cursor: pointer;
+    transition: all .2s;
   }
   
   .speaker_button:hover {
     color: purple; /* Button color on hover */
+    transform: scale(1.3);
   }
   

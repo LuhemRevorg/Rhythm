@@ -8,6 +8,7 @@
 # testing
 /coverage
 /src/videos/background-video.mp4
+/src/videos/Waves.mp4
 
 # production
 /build

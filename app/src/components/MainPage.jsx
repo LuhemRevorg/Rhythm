@@ -1,21 +1,24 @@
-// src/pages/MainPage.js
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './page.module.css';
-import Navbar from '../components/Navbar';
 import RecordRTC from 'recordrtc';
+import WaveM from "../videos/Waves.mp4";
 
 function MainPage() {
   const [script, setScript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(new Uint8Array(0));
   const animationRef = useRef(null);
   const canvasRef = useRef(null);
-  const audioPlayerRef = useRef(new Audio()); // Reference to the audio player
+  const audioPlayerRef = useRef(new Audio());
+  const intervalRef = useRef(null);
+  const maxRecordingDuration = 60; // Set max duration to 60 seconds
 
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -36,6 +39,9 @@ function MainPage() {
     recorderRef.current.startRecording();
     setIsRecording(true);
     drawVisualizer();
+
+    // Automatically stop recording after max duration
+    setTimeout(stopRecording, maxRecordingDuration * 1000);
   };
 
   const stopRecording = () => {
@@ -53,7 +59,37 @@ function MainPage() {
     if (audioURL) {
       audioPlayerRef.current.src = audioURL; // Set the audio source
       audioPlayerRef.current.play(); // Play the audio
+
+      audioPlayerRef.current.onloadedmetadata = () => {
+        setDuration(Math.min(audioPlayerRef.current.duration, maxRecordingDuration)); // Set duration with a max limit
+      };
+
+      setCurrentTime(0); // Reset current time
+      startTimer(); // Start the timer
     }
+  };
+
+  const startTimer = () => {
+    intervalRef.current = setInterval(() => {
+      if (audioPlayerRef.current && !audioPlayerRef.current.ended) {
+        setCurrentTime(audioPlayerRef.current.currentTime);
+      }
+    }, 1000);
+  };
+
+  const pauseTimer = () => {
+    clearInterval(intervalRef.current);
+  };
+
+  const handleAudioSeek = (event) => {
+    const newTime = (event.target.value / 100) * duration;
+    audioPlayerRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const stopPlayback = () => {
+    audioPlayerRef.current.pause();
+    pauseTimer();
   };
 
   const drawVisualizer = () => {
@@ -95,58 +131,118 @@ function MainPage() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (script && audioURL) {
       setIsSubmitting(true); // Show spinner
-      setScript(''); // Clear the script
-      setAudioURL(null); // Clear the audio URL
 
-      // Hide spinner after 10 seconds
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 10000);
+      // Prepare the form data
+      const formData = new FormData();
+      formData.append('script', script);
+      formData.append('audio', await fetch(audioURL).then(res => res.blob())); // Fetch the audio as a blob
+
+      try {
+        // Send the form data to the Flask backend
+        const response = await fetch('http://localhost:8080/predict', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result); // Log the entire result for debugging
+
+          // Display both the received message and the script message
+          alert(`${result.message}\n${result.script}`);
+        } else {
+          console.error('Error sending audio to backend');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setScript(''); // Clear the script
+        setAudioURL(null); // Clear the audio URL
+        setIsSubmitting(false); // Hide spinner
+        pauseTimer(); // Stop the timer
+      }
     } else {
       alert('Please fill in the script and record audio before submitting.');
     }
   };
 
+  useEffect(() => {
+    // Clean up audio player on unmount
+    return () => {
+      audioPlayerRef.current.pause();
+      pauseTimer();
+      clearInterval(intervalRef.current);
+    };
+  }, []);
+
   return (
     <div className={`${styles.page} ${isSubmitting ? styles.blurred : ''}`}>
-      <Navbar />
-      <div className={styles.scriptContainer}>
-        <h1>Welcome to the Main Page</h1>
-        <textarea
-          className={styles.scriptBox}
-          value={script}
-          onChange={(e) => setScript(e.target.value)}
-          placeholder="Paste your script here..."
-        />
-        <div className={styles.buttonContainer}>
-          {isRecording ? (
-            <button className={styles.recordButton} onClick={stopRecording}>
-              Stop Recording
-            </button>
-          ) : (
-            <button className={styles.recordButton} onClick={startRecording}>
-              Start Recording
-            </button>
-          )}
-          {audioURL && (
-            <>
-              <button className={styles.playButton} onClick={playRecording}>
-                Play Recording
+      <div className={styles.boxContainer}>
+        <div className={styles.scriptBoxes}>
+          <div className={styles.scriptContainer}>
+            <h1>Enter your Transcript and speak here!</h1>
+            <textarea
+              className={styles.scriptBox}
+              value={script}
+              onChange={(e) => setScript(e.target.value)}
+              placeholder="Paste your script here..."
+            />
+            <div className={styles.buttonContainer}>
+              {isRecording ? (
+                <button className={styles.recordButton} onClick={stopRecording}>
+                  Stop Recording
+                </button>
+              ) : (
+                <button className={styles.recordButton} onClick={startRecording}>
+                  Start Recording
+                </button>
+              )}
+              {audioURL && (
+                <>
+                  <button className={styles.playButton} onClick={playRecording}>
+                    Play Recording
+                  </button>
+                  <button className={styles.downloadButton} onClick={downloadAudio}>
+                    Download Audio
+                  </button>
+                  <div className={styles.audioControls}>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={(currentTime / duration) * 100 || 0}
+                      onChange={handleAudioSeek}
+                      className={styles.audioSeekBar}
+                    />
+                    <div className={styles.audioTimer}>
+                      {Math.floor(currentTime)} / {Math.floor(duration)} seconds
+                    </div>
+                  </div>
+                </>
+              )}
+              <button className={styles.submitButton} onClick={handleSubmit}>
+                Submit Script & Audio
               </button>
-              <button className={styles.downloadButton} onClick={downloadAudio}>
-                Download Audio
-              </button>
-            </>
-          )}
-          <button className={styles.submitButton} onClick={handleSubmit}>
-            Submit Script & Audio
-          </button>
+            </div>
+            <canvas ref={canvasRef} width="600" height="100" className={styles.visualizer}></canvas>
+          </div>
+
+          <div className={styles.scriptContainer}>
+            <h1>AI based feedback here:</h1>
+          </div>
         </div>
-        <canvas ref={canvasRef} width="600" height="100" className={styles.visualizer}></canvas>
       </div>
+
+      <div className={styles.video_container}>
+        <video className={styles.bottom_video} autoPlay loop muted>
+          <source src={WaveM} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
       {isSubmitting && (
         <div className={styles.spinnerContainer}>
           <img src="/path/to/soundWave.png" alt="Sound Wave" className={styles.spinnerImage} />

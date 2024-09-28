@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './landing.module.css';
 import BackgroundVideo from '../videos/background-video.mp4'; 
-import Navbar from './Navbar';
-import Speaker1 from "../images/Speaker1.png"
 
 const sentences = [
   "Revolutionalize the world",
@@ -19,7 +17,6 @@ function Landing() {
   const [isTextVisible, setIsTextVisible] = useState(false);
   const [isBlurred, setIsBlurred] = useState(false);
   const [showSpeakerBoxes, setShowSpeakerBoxes] = useState(false);
-  const [showNavbar, setShowNavbar] = useState(false); // New state for navbar visibility
 
   const navigate = useNavigate();
 
@@ -27,7 +24,7 @@ function Landing() {
     const timerBlur = setTimeout(() => {
       setIsBlurred(true);
       setIsTextVisible(true);
-    }, 5000);
+    }, 3000);
 
     const textCycleInterval = setInterval(() => {
       setCurrentSentenceIndex((prevIndex) => (prevIndex + 1) % sentences.length);
@@ -35,16 +32,11 @@ function Landing() {
 
     const speakerTimer = setTimeout(() => {
       setShowSpeakerBoxes(true);
-    }, 5500);
-
-    const navbarTimer = setTimeout(() => {
-      setShowNavbar(true); // Show navbar after text appears
-    }, 6000); // Delay to show navbar after the text
+    }, 3500);
 
     return () => {
       clearTimeout(timerBlur);
       clearTimeout(speakerTimer);
-      clearTimeout(navbarTimer);
       clearInterval(textCycleInterval);
     };
   }, []);
@@ -71,16 +63,12 @@ function Landing() {
       </video>
 
       <div className={`${styles.text_container} ${isTextVisible ? styles.text_fade_in : ''}`}>
-        <h1 className={styles.main_text}>RHYTHM</h1>
+        <h1 className={styles.project_header}>RHYTHM</h1>
         <h1 className={styles.main_text}>{getStyledSentence(sentences[currentSentenceIndex])}</h1>
       </div>
       
       <div className={`${styles.speaker_container} ${showSpeakerBoxes ? styles.show : ''}`}>
-        <div className={`${styles.speaker_box} ${styles.speaker1}`}>
-          <label className={styles.speaker_label}>Try us!</label>
-          <img src={Speaker1} alt="Speaker 1" className={styles.speaker_image} />
-          <button className={styles.speaker_button} onClick={() => navigate('/main')}>↑</button>
-        </div>
+        <button className={styles.speaker_button} onClick={() => navigate('/main')}>Get Started</button>
       </div>
     </div>
   );

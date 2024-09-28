@@ -1,23 +1,43 @@
 /* src/pages/page.module.css */
 .page {
-    background-color: #121212; /* Dark background */
+    background: #ffffff; /* Smooth gradient background */
     color: #ffffff; /* White text */
     min-height: 100vh; /* Full height */
     padding: 20px; /* Padding */
     font-family: 'Arial', sans-serif; /* Clean font */
     display: flex;
-    flex-direction: column;
-  }
-  
-  .scriptContainer {
-    background-color: rgba(30, 30, 30, 0.8); /* Light black background for script box */
+    flex-direction: column; /* Change to column layout */
+    justify-content: center;
+}
+
+.boxContainer {
+    position: absolute;
+    width: 1468px;
+    display: flex; /* Use flexbox for the inner box layout */
+    top: 5%;
+    justify-content: space-around;
+}
+
+.scriptBoxes {
+    display: flex; /* Side by side layout for the script containers */
+    flex: 1; /* Allow the script boxes to grow equally */
+    justify-content: space-evenly;
+}
+
+.scriptContainer {
+    background-color: rgb(30, 30, 30); /* Light black background for script box */
     border-radius: 10px; /* Rounded corners */
     padding: 20px; /* Padding */
-    max-width: 600px; /* Limit width */
-    margin: auto; /* Center container */
-  }
-  
-  .scriptBox {
+    max-width: 700px; /* Limit width */
+    flex: 1; /* Allow equal width for each box */
+    top: 0;
+    z-index: 2;
+    position: relative; /* Change to relative for better layout */
+    height: 400px; /* Set height to 40% of the viewport height */
+    overflow: auto; /* Enable scrolling if content exceeds the height */
+}
+
+.scriptBox {
     width: 100%; /* Full width */
     height: 200px; /* Height */
     border: none; /* Remove default border */
@@ -26,39 +46,43 @@
     background-color: rgba(255, 255, 255, 0.1); /* Light background */
     color: #ffffff; /* White text */
     resize: none; /* Disable resize */
-  }
-  
-  .buttonContainer {
+}
+
+.buttonContainer {
     display: flex; /* Flex for buttons */
     justify-content: space-between; /* Space between buttons */
     margin-top: 10px; /* Space above buttons */
-  }
-  
-  .recordButton {
-    background-color: #e91e63; /* Record button color */
+}
+
+.recordButton, .downloadButton {
+    background-color: #777; /* Grayscale button color */
     color: white; /* Button text color */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
     padding: 10px 20px; /* Padding */
     cursor: pointer; /* Pointer on hover */
     transition: background-color 0.3s; /* Smooth transition */
-  }
-  
-  .recordButton:hover {
-    background-color: #c2185b; /* Darker shade on hover */
-  }
-  
-  .downloadButton {
-    background-color: #4caf50; /* Download button color */
-    color: white; /* Button text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px 20px; /* Padding */
-    cursor: pointer; /* Pointer on hover */
-    transition: background-color 0.3s; /* Smooth transition */
-  }
-  
-  .downloadButton:hover {
-    background-color: #388e3c; /* Darker shade on hover */
-  }
-  
+}
+
+.recordButton:hover, .downloadButton:hover {
+    background-color: #555; /* Darker shade on hover */
+}
+
+/* Styles for the video container */
+.video_container {
+    position: fixed; /* Fixed position */
+    top: 60%;
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+    width: 100vw; /* Full width */
+    height: 250px; /* Height of the video */
+    overflow: hidden; /* Hides overflow */
+    z-index: 1; /* Ensure it appears above other content */
+}
+
+.bottom_video {
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height to fill the container */
+    object-fit: cover; /* Ensures the video covers the container */
+    object-position: center; /* Focus on the center of the video */
+}
